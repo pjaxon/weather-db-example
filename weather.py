@@ -2,6 +2,9 @@
 import os
 import psycopg2
 from psycopg2.extras import DictCursor
+import requests
+import json
+import traceback
 
 def db_connect():
   db_name = os.environ['db_name']
@@ -42,9 +45,11 @@ def get_noaa_data():
     noaa_token = os.environ['noaa_token']
     header = {'token': noaa_token}
     url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&locationid=ZIP:80455&startdate=2020-01-01&enddate=2020-01-31&limit=10"
-    r = request.get(url, headers=header)
-    print(r)
+    r = requests.get(url, headers=header)
+    print(r.content)
   except:
     print('You fucked something up!')
+    traceback.print_exc()
+
 
 get_noaa_data()

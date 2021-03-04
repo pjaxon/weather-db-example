@@ -6,6 +6,9 @@ import requests
 import json
 import traceback
 
+
+# Connect to database
+
 def db_connect():
   db_name = os.environ['db_name']
   db_user = os.environ['db_user']
@@ -23,9 +26,11 @@ def db_connect():
   cur = conn.cursor(cursor_factory=DictCursor)
   return cur
 
-
-
 dwh_cur = db_connect()
+
+
+# Pull data from database
+
 def select_data():
 	test_sql = "select * from weather.emdat_america_disasters LIMIT 5"
 
@@ -34,11 +39,17 @@ def select_data():
 	for row in rows:
 	   print(row['Dis No'])
 
+
+# Push data to database
+
 def insert_data():
 	test_sql = "INSERT INTO weather.test VALUES ('blah','blah2')"
 	dwh_cur.execute(test_sql)
 
 # insert_data()
+
+
+# Extract NOAA data
 
 def get_noaa_data():
   try:
@@ -51,5 +62,20 @@ def get_noaa_data():
     print('You fucked something up!')
     traceback.print_exc()
 
+#get_noaa_data()
 
-get_noaa_data()
+
+# Extract WHO data
+
+def get_who_data():
+  try:
+    #noaa_token = os.environ['noaa_token']
+    #header = {'token': noaa_token}
+    url = "https://ghoapi.azureedge.net/api/Dimension/"
+    r = requests.get(url)
+    print(r.content)
+  except:
+    print('You fucked something up!')
+    traceback.print_exc()
+
+get_who_data()

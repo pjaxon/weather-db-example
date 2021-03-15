@@ -1,4 +1,4 @@
-# python to come
+## This script connects to our database and gets data from NOAA
 import os
 import psycopg2
 from psycopg2.extras import DictCursor
@@ -8,7 +8,6 @@ import traceback
 
 
 # Connect to database
-
 def db_connect():
   db_name = os.environ['db_name']
   db_user = os.environ['db_user']
@@ -69,8 +68,6 @@ def get_noaa_data():
 
 def get_who_data():
   try:
-    #noaa_token = os.environ['noaa_token']
-    #header = {'token': noaa_token}
     url = "https://ghoapi.azureedge.net/api/Dimension/"
     r = requests.get(url)
     print(r.content)

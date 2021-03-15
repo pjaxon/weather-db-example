@@ -43,10 +43,10 @@ def select_data():
 # Push data to database
 
 def insert_data():
-	test_sql = "INSERT INTO weather.test VALUES ('blah','blah2')"
+	test_sql = "INSERT INTO weather.noaa_stations_raw VALUES ('/home/theraceblogger/temp_data/station_dump1.json')"
 	dwh_cur.execute(test_sql)
 
-# insert_data()
+insert_data()
 
 
 # Extract NOAA data
@@ -78,4 +78,4 @@ def get_who_data():
     print('You fucked something up!')
     traceback.print_exc()
 
-get_who_data()
+#get_who_data()

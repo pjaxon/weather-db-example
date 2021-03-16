@@ -12,7 +12,7 @@ noaa_token = os.environ['noaa_token']
 header = {'token': noaa_token}
 base_url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations"
 dataset_id = "?datasetid=GHCND"
-limit = "&limit=1000"
+limit = "&limit=10"
 
 # Function gets NOAA station data (118,487 entries - 1000 at a time) and loads into database
 def get_noaa_stations(entry_number = 1):
@@ -26,15 +26,16 @@ def get_noaa_stations(entry_number = 1):
 
         for result in j['results']:
             try:
-                insert_sql = "INSERT INTO weather.stations_raw (station_id, station_jsonb) VALUES (%s,%s) ON CONFLICT (station_id) DO UPDATE SET station_jsonb = %s"
-                cur.execute(insert_sql, (result['id'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True))) 
+                print(result)
+                # insert_sql = "INSERT INTO weather.stations_raw (station_id, station_jsonb) VALUES (%s,%s) ON CONFLICT (station_id) DO UPDATE SET station_jsonb = %s"
+                # cur.execute(insert_sql, (result['id'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True))) 
             except:
                 print ('could not iterate through results')
         
-        entry_number += 1000       
-        if (entry_number < j['metadata']['resultset']['count']): 
-            #print('get_noaa_stations looping')
-            get_noaa_stations(entry_number)
+        # entry_number += 1000       
+        # if (entry_number < j['metadata']['resultset']['count']): 
+        #     #print('get_noaa_stations looping')
+        #     get_noaa_stations(entry_number)
                 
     except:
         print('Function failed')

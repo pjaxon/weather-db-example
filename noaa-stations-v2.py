@@ -59,6 +59,6 @@ def db_connect():
   cur = conn.cursor(cursor_factory=DictCursor)
   return cur
 
-dwh_cur = db_connect()
+cur = db_connect()
 
 get_noaa_stations()

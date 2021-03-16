@@ -57,11 +57,11 @@ def get_noaa(station):
             load_data(url)
 
         elif year == 0:
-            url = base_url + dataset_id + station_id + station + start_date + start + end_date + start_dt.year + "-12-31" + limit + offset
+            url = base_url + dataset_id + station_id + station + start_date + start + end_date + str(start_dt.year) + "-12-31" + limit + offset
             load_data(url)
 
         elif year == num_years - 1:
-            url = base_url + dataset_id + station_id + station + start_date + end_dt.year + "-01-01" + end_date + end + limit + offset
+            url = base_url + dataset_id + station_id + station + start_date + str(end_dt.year) + "-01-01" + end_date + end + limit + offset
             load_data(url)
 
         else:

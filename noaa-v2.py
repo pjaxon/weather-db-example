@@ -14,17 +14,31 @@ base_url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/data"
 dataset_id = "?datasetid=GHCND"
 data_types = ""
 locations = ""
+<<<<<<< HEAD
 stations = "&stationid=GHCND:AEM00041217"
 start_date = "&startdate=1993-01-02"
 end_date = "&enddate=1993-03-10"
+=======
+station = "GHCND:AEM00041217"
+start_date = "&startdate=1983-01-02"
+end_date = "&enddate=2021-03-10"
+>>>>>>> c07fa340ba18d49eaff7ba4ff08c171b39e65049
 limit = "&limit=1000"
+
+def get_station_params(station):
+    min_query = f"SELECT sr.station_jsonb ->> 'mindate' FROM weather.stations_raw sr WHERE sr.station_id = {station}"
+    #max_query = f"SELECT sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr WHERE sr.station_id = {station}"
+    cur.execute(min_query)
+    start = cur.fetchall()
+    return start
+
 
 # Function gets NOAA data and loads into database
 def get_noaa(entry_number = 1):
     try:
         time.sleep(.5)
         offset = "&offset=" + str(entry_number)
-        url = base_url + dataset_id + data_types + locations + stations + start_date + end_date + limit + offset
+        url = base_url + dataset_id + "&stationid=" + station + start_date + end_date + limit + offset
         print('Starting entry num: ' + str(entry_number) + ', ' + url)
         r = requests.get(url, headers=header)
         j = r.json()
@@ -45,6 +59,7 @@ def get_noaa(entry_number = 1):
     except:
         print('Function failed')
 
+
 def db_connect():
     db_name = os.environ['db_name']
     db_user = os.environ['db_user']
@@ -64,4 +79,10 @@ def db_connect():
 
 cur = db_connect()
 
+<<<<<<< HEAD
 get_noaa()
+=======
+print(get_station_params)
+
+#get_noaa()
+>>>>>>> c07fa340ba18d49eaff7ba4ff08c171b39e65049

@@ -1,5 +1,4 @@
-## This script gets 118,487 stations data from NOAA, stores it in file
-## '/Users/chuckschultz/work/data/station_dump.json' and logs the transaction
+## This script gets 118,487 stations data from NOAA, and stores it in weather.stations_raw
 import os
 import psycopg2
 from psycopg2.extras import DictCursor
@@ -7,69 +6,55 @@ import requests
 import datetime
 import json
 import time
-noaa_token = os.environ['noaa_token']
 
 # Set variables
+noaa_token = os.environ['noaa_token']
 header = {'token': noaa_token}
 base_url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations"
 dataset_id = "?datasetid=GHCND"
-
 limit = "&limit=1000"
 
-# Function gets NOAA station data (118,487 entries - 25 at a time),
-# store in file '/Users/chuckschultz/work/data/station_dump.json' and
-# log transaction in file '/Users/chuckschultz/work/data/noaa_stations.log'
-def get_noaa_stations(page_number = 1):
-    # batch_total = 0
-    global max_page_number
-    
+# Function gets NOAA station data (118,487 entries - 1000 at a time)
+def get_noaa_stations(entry_number = 1):
     try:
-            time.sleep(.5)
-            
-            offset = "&offset=" + str(page_number)
-            url = base_url + dataset_id + limit + offset
-            print ('Starting page num: ' + str(page_number) + ', ' + url )
-            dump = requests.get(url, headers=header)
-            j = dump.json()
-            
-            print (j['metadata']['resultset']['count'])
-            
-            # print (dump.json()) # j = r.json()
-            for result in j['results']:
-                try:
-                    # print (result)
-                    insert_sql = "INSERT INTO weather.stations_raw (station_id, station_jsonb) VALUES (%s,%s) ON CONFLICT (station_id) DO UPDATE SET station_jsonb = %s"
-                    cur.execute(insert_sql,  ( result['id'],  json.dumps(result, indent=4, sort_keys=True),  json.dumps(result, indent=4, sort_keys=True) ) )
-                    # records_processed += 1
-                    
-                except:
-                    print ('could not iterate through results')
+        time.sleep(.5)
+        offset = "&offset=" + str(entry_number)
+        url = base_url + dataset_id + limit + offset
+        #print('Starting entry num: ' + str(entry_number) + ', ' + url)
+        r = requests.get(url, headers=header)
+        j = r.json()
 
-                    
-            if (page_number < j['metadata']['resultset']['count']): 
-                page_number += 1000
-                print ('get_noaa_stations looping')
-                get_noaa_stations(page_number)
+        for result in j['results']:
+            try:
+                insert_sql = "INSERT INTO weather.stations_raw (station_id, station_jsonb) VALUES (%s,%s) ON CONFLICT (station_id) DO UPDATE SET station_jsonb = %s"
+                cur.execute(insert_sql, (result['id'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True))) 
+            except:
+                print ('could not iterate through results')
+               
+        if (entry_number < j['metadata']['resultset']['count']): 
+            entry_number += 1000
+            #print('get_noaa_stations looping')
+            get_noaa_stations(entry_number)
                 
     except:
         print('Function failed')
 
 def db_connect():
-  db_name = os.environ['db_name']
-  db_user = os.environ['db_user']
-  db_host = os.environ['db_host']
-  db_credentials = os.environ['db_creds']
- 
-  conn_string = "dbname='" + str(db_name) + "' user='" + str(db_user) + "' host='" + str(db_host) + "' password='" + str(db_credentials) + "'"
+    db_name = os.environ['db_name']
+    db_user = os.environ['db_user']
+    db_host = os.environ['db_host']
+    db_credentials = os.environ['db_creds']
+  
+    conn_string = "dbname='" + str(db_name) + "' user='" + str(db_user) + "' host='" + str(db_host) + "' password='" + str(db_credentials) + "'"
 
-  try:
-    conn = psycopg2.connect(str(conn_string))
-    conn.autocommit = True
-  except:
-    print("Unable to connect to the database")
+    try:
+        conn = psycopg2.connect(str(conn_string))
+        conn.autocommit = True
+    except:
+        print("Unable to connect to the database")
 
-  cur = conn.cursor(cursor_factory=DictCursor)
-  return cur
+    cur = conn.cursor(cursor_factory=DictCursor)
+    return cur
 
 cur = db_connect()
 

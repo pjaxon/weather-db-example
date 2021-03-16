@@ -1,6 +1,8 @@
 ## This script gets 118,487 stations data from NOAA, stores it in file
 ## '/Users/chuckschultz/work/data/station_dump.json' and logs the transaction
 import os
+import psycopg2
+from psycopg2.extras import DictCursor
 import requests
 import datetime
 import json
@@ -37,5 +39,24 @@ def get_noaa_stations():
         print("Count:", None)
         with open('/home/theraceblogger/temp_data/noaa_stations.log', 'a') as file: # log transaction
             file.write(str(datetime.datetime.now()) + "\nCount: None")
+
+def db_connect():
+  db_name = os.environ['db_name']
+  db_user = os.environ['db_user']
+  db_host = os.environ['db_host']
+  db_credentials = os.environ['db_creds']
+ 
+  conn_string = "dbname='" + str(db_name) + "' user='" + str(db_user) + "' host='" + str(db_host) + "' password='" + str(db_credentials) + "'"
+
+  try:
+    conn = psycopg2.connect(str(conn_string))
+    conn.autocommit = True
+  except:
+    print("Unable to connect to the database")
+
+  cur = conn.cursor(cursor_factory=DictCursor)
+  return cur
+
+dwh_cur = db_connect()
 
 get_noaa_stations()

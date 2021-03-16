@@ -14,9 +14,9 @@ base_url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/data"
 dataset_id = "?datasetid=GHCND"
 data_types = ""
 locations = ""
-stations = "&stationid=GHCND:ASN00004081"
-start_date = "&startdate=1944-05-01"
-end_date = "&enddate=1945-04-30"
+stations = "&stationid=GHCND:AEM00041217"
+start_date = "&startdate=1983-01-02"
+end_date = "&enddate=2021-03-10"
 limit = "&limit=1000"
 
 # Function gets NOAA data and loads into database

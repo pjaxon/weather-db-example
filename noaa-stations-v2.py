@@ -9,8 +9,6 @@ import json
 import time
 noaa_token = os.environ['noaa_token']
 
-max_page_number = 119000
-
 # Set variables
 header = {'token': noaa_token}
 base_url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations"
@@ -33,6 +31,9 @@ def get_noaa_stations(page_number = 1):
             print ('Starting page num: ' + str(page_number) + ', ' + url )
             dump = requests.get(url, headers=header)
             j = dump.json()
+            
+            print (j['metadata']['resultset']['count'])
+            
             # print (dump.json()) # j = r.json()
             for result in j['results']:
                 try:
@@ -45,15 +46,13 @@ def get_noaa_stations(page_number = 1):
                     print ('could not iterate through results')
 
                     
-            if (page_number < max_page_number): 
+            if (page_number < j['metadata']['resultset']['count']): 
                 page_number += 1000
                 print ('get_noaa_stations looping')
                 get_noaa_stations(page_number)
                 
-    except TypeError: # If there are no results
-        print("Count:", None)
-        with open('/home/theraceblogger/temp_data/noaa_stations.log', 'a') as file: # log transaction
-            file.write(str(datetime.datetime.now()) + "\nCount: None")
+    except:
+        print('Function failed')
 
 def db_connect():
   db_name = os.environ['db_name']

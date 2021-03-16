@@ -12,54 +12,63 @@ noaa_token = os.environ['noaa_token']
 header = {'token': noaa_token}
 base_url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/data"
 dataset_id = "?datasetid=GHCND"
-data_types = ""
-locations = ""
+station_id = "&stationid="
 station = "GHCND:AEM00041217"
-start_date = "&startdate=1983-01-02"
-end_date = "&enddate=2021-03-10"
+start_date = "&startdate="
+end_date = "&enddate="
 limit = "&limit=1000"
+offset = "&offset="
 
+# Function that returns mindate and maxdate for a given station
 def get_station_params(station):
     query = f"SELECT sr.station_jsonb ->> 'mindate', sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr WHERE sr.station_id = '{station}'"
-    # min_query = f"SELECT sr.station_jsonb ->> 'mindate' FROM weather.stations_raw sr WHERE sr.station_id = '{station}'"
-    # max_query = f"SELECT sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr WHERE sr.station_id = '{station}'"
-    # cur.execute(min_query)
-    # start = cur.fetchall()
-    # cur.execute(max_query)
-    # end = cur.fetchall()
-    # return start[0][0], end[0][0]
     cur.execute(query)
     result = cur.fetchall()
     return result[0][0], result[0][1]
 
-
-# Function gets NOAA data and loads into database
-def get_noaa(entry_number = 1):
+# Function that iterates through a year and loads data
+def load_data(url, off_set=1):
     try:
         time.sleep(.5)
-        offset = "&offset=" + str(entry_number)
-        url = base_url + dataset_id + "&stationid=" + station + start_date + end_date + limit + offset
-        print('Starting entry num: ' + str(entry_number) + ', ' + url)
         r = requests.get(url, headers=header)
         j = r.json()
-
         for result in j['results']:
             try:
                 print(result)
-                # insert_sql = "INSERT INTO weather.stations_raw (station_id, station_jsonb) VALUES (%s,%s) ON CONFLICT (station_id) DO UPDATE SET station_jsonb = %s"
-                # cur.execute(insert_sql, (result['id'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True))) 
             except:
                 print ('could not iterate through results')
-        
-        entry_number += 1000       
-        if (entry_number < j['metadata']['resultset']['count']): 
-            #print('get_noaa_stations looping')
-            get_noaa(entry_number)
-                
+        off_set += 1000
+        if (off_set <= j['metadata']['resultset']['count']):
+            url = base_url + dataset_id + station_id + station + start_date + start + end_date + end + limit + offset + off_set
+            load_data(url, off_set)
     except:
         print('Function failed')
 
+# Function gets NOAA data and loads into database
+def get_noaa(station):
+    start, end = get_station_params(station)
+    start_dt = datetime.date(start)
+    end_dt = datetime.date(end)
+    num_years = end_dt.year - start_dt.year + 1
 
+    for year in range(num_years):
+        if num_years == 1:
+            url = base_url + dataset_id + station_id + station + start_date + start + end_date + end + limit + offset + off_set
+            load_data(url)
+
+        elif year == 0:
+            url = base_url + dataset_id + station_id + station + start_date + start + end_date + start_dt.year + "-12-31" + limit + offset
+            load_data(url)
+
+        elif year == num_years - 1:
+            url = base_url + dataset_id + station_id + station + start_date + end_dt.year + "-01-01" + end_date + end + limit + offset
+            load_data(url)
+
+        else:
+            url = base_url + dataset_id + station_id + station + start_date + str(start_dt.year+year) + "-01-01" + end_date + str(start_dt.year+year) + "-12-31" + limit + offset
+            load_data(url)
+
+# Function that connects to database
 def db_connect():
     db_name = os.environ['db_name']
     db_user = os.environ['db_user']
@@ -79,9 +88,4 @@ def db_connect():
 
 cur = db_connect()
 
-end, start = get_station_params(station)
-print(end)
-print(start)
-#print(get_station_params(station))
-
-#get_noaa()
+get_noaa(station)

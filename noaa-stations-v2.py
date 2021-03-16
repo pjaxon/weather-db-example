@@ -32,13 +32,14 @@ def get_noaa_stations(entry_number = 1):
                 print ('could not iterate through results')
         
         entry_number += 1000       
-        if (entry_number < j['metadata']['resultset']['count']): 
+        if (entry_number <= j['metadata']['resultset']['count']): 
             #print('get_noaa_stations looping')
             get_noaa_stations(entry_number)
                 
     except:
         print('Function failed')
 
+# Function that connects to database
 def db_connect():
     db_name = os.environ['db_name']
     db_user = os.environ['db_user']

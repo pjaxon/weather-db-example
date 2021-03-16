@@ -24,7 +24,7 @@ def get_station_params(station):
     #max_query = f"SELECT sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr WHERE sr.station_id = '{station}'"
     cur.execute(min_query)
     start = cur.fetchall()
-    return start[0]
+    return start[0][0]
 
 
 # Function gets NOAA data and loads into database
@@ -73,6 +73,7 @@ def db_connect():
 
 cur = db_connect()
 
-print(get_station_params(station))
+minimum = get_station_params(station)
+print(minimum)
 
 #get_noaa()

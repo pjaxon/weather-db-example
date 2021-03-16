@@ -26,7 +26,7 @@ def get_noaa_stations():
             url = base_url + dataset_id + limit + offset
             dump = requests.get(url, headers=header)
             
-            print (dump.content) # j = r.json()
+            print (dump.json()) # j = r.json()
 
             
 

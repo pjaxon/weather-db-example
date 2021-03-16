@@ -73,6 +73,6 @@ def db_connect():
 
 cur = db_connect()
 
-print(get_station_params)
+print(get_station_params())
 
 #get_noaa()

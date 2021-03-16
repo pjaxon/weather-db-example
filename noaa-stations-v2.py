@@ -9,7 +9,7 @@ import json
 import time
 noaa_token = os.environ['noaa_token']
 
-max_page_number = 119
+max_page_number = 119000
 
 # Set variables
 header = {'token': noaa_token}

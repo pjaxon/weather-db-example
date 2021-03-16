@@ -15,8 +15,8 @@ dataset_id = "?datasetid=GHCND"
 data_types = ""
 locations = ""
 stations = "&stationid=GHCND:AEM00041217"
-start_date = "&startdate=1983-01-02"
-end_date = "&enddate=2021-03-10"
+start_date = "&startdate=1993-01-02"
+end_date = "&enddate=1993-03-10"
 limit = "&limit=1000"
 
 # Function gets NOAA data and loads into database

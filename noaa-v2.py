@@ -3,7 +3,7 @@ import os
 import psycopg2
 from psycopg2.extras import DictCursor
 import requests
-import datetime
+from datetime import datetime
 import json
 import time
 
@@ -47,8 +47,8 @@ def load_data(url, off_set=1):
 # Function gets NOAA data and loads into database
 def get_noaa(station):
     start, end = get_station_params(station)
-    start_dt = datetime.strptime(start)
-    end_dt = datetime.strptime(end)
+    start_dt = datetime.strptime(start, '%y-%m-%d')
+    end_dt = datetime.strptime(end, '%y-%m-%d')
     num_years = end_dt.year - start_dt.year + 1
 
     for year in range(num_years):

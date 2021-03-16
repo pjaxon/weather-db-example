@@ -20,7 +20,7 @@ def get_noaa_stations(entry_number = 1):
         time.sleep(.5)
         offset = "&offset=" + str(entry_number)
         url = base_url + dataset_id + limit + offset
-        #print('Starting entry num: ' + str(entry_number) + ', ' + url)
+        print('Starting entry num: ' + str(entry_number) + ', ' + url)
         r = requests.get(url, headers=header)
         j = r.json()
 
@@ -30,9 +30,9 @@ def get_noaa_stations(entry_number = 1):
                 cur.execute(insert_sql, (result['id'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True))) 
             except:
                 print ('could not iterate through results')
-               
+        
+        entry_number += 1000       
         if (entry_number < j['metadata']['resultset']['count']): 
-            entry_number += 1000
             #print('get_noaa_stations looping')
             get_noaa_stations(entry_number)
                 

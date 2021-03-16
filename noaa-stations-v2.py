@@ -37,7 +37,8 @@ def get_noaa_stations():
                         except:
                             print ( "Could not insert deal json")
                             traceback.print_exc()
-            
+                except:
+                    print ('could not iterate through results')
 
     except TypeError: # If there are no results
         print("Count:", None)

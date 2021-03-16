@@ -47,8 +47,8 @@ def load_data(url, off_set=1):
 # Function gets NOAA data and loads into database
 def get_noaa(station):
     start, end = get_station_params(station)
-    start_dt = datetime.strptime(start, '%y-%m-%d')
-    end_dt = datetime.strptime(end, '%y-%m-%d')
+    start_dt = datetime.strptime(start, '%Y-%m-%d')
+    end_dt = datetime.strptime(end, '%Y-%m-%d')
     num_years = end_dt.year - start_dt.year + 1
 
     for year in range(num_years):

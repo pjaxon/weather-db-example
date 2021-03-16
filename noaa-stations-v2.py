@@ -25,9 +25,18 @@ def get_noaa_stations():
             offset = "&offset=" + str(off)
             url = base_url + dataset_id + limit + offset
             dump = requests.get(url, headers=header)
-            
-            print (dump.json()) # j = r.json()
-
+            j = dump.json()
+            # print (dump.json()) # j = r.json()
+            for result in j['data']:
+                try:
+                    # insert_sql = "INSERT INTO pipedrive.deals_api (deal_id, deal_json) VALUES (%s, (regexp_replace(%s::text, '\\u0000', '', 'g'))::jsonb) ON CONFLICT (deal_id) DO UPDATE SET deal_json = (regexp_replace(%s::text, '\\u0000', '', 'g'))::jsonb "
+                    print (result)
+                        try:
+                            #cur.execute(insert_sql,  ( deal['id'],  json.dumps(deal, indent=4, sort_keys=True),  json.dumps(deal, indent=4, sort_keys=True) ) )
+                            print ('it worked')
+                        except:
+                            print ( "Could not insert deal json")
+                            traceback.print_exc()
             
 
     except TypeError: # If there are no results

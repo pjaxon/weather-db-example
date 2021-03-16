@@ -9,26 +9,25 @@ import json
 import time
 noaa_token = os.environ['noaa_token']
 
-# records_processed = 0
-
+max_page_number = 119
 
 # Set variables
 header = {'token': noaa_token}
 base_url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/stations"
 dataset_id = "?datasetid=GHCND"
-limit = "&limit=10"
+
+limit = "&limit=1000"
 
 # Function gets NOAA station data (118,487 entries - 25 at a time),
 # store in file '/Users/chuckschultz/work/data/station_dump.json' and
 # log transaction in file '/Users/chuckschultz/work/data/noaa_stations.log'
-def get_noaa_stations():
+def get_noaa_stations(page_number = 0):
     # batch_total = 0
-    global records_processed
-    off = 1
+    global max_page_number
+    
     try:
-        for batch in range(2): # range(119)
-            time.sleep(1)
-            offset = "&offset=" + str(off)
+            time.sleep(.5)
+            offset = "&offset=" + str(page_number)
             url = base_url + dataset_id + limit + offset
             dump = requests.get(url, headers=header)
             j = dump.json()
@@ -43,6 +42,11 @@ def get_noaa_stations():
                 except:
                     print ('could not iterate through results')
 
+                    
+            if (page_number < max_page_number): 
+                page_number += 1
+                get_noaa_stations(page_number)
+                
     except TypeError: # If there are no results
         print("Count:", None)
         with open('/home/theraceblogger/temp_data/noaa_stations.log', 'a') as file: # log transaction

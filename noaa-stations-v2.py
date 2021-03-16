@@ -9,6 +9,8 @@ import json
 import time
 noaa_token = os.environ['noaa_token']
 
+# records_processed = 0
+
 
 # Set variables
 header = {'token': noaa_token}
@@ -20,6 +22,8 @@ limit = "&limit=10"
 # store in file '/Users/chuckschultz/work/data/station_dump.json' and
 # log transaction in file '/Users/chuckschultz/work/data/noaa_stations.log'
 def get_noaa_stations():
+    # batch_total = 0
+    global records_processed
     off = 1
     try:
         for batch in range(2): # range(119)
@@ -34,6 +38,8 @@ def get_noaa_stations():
                     # print (result)
                     insert_sql = "INSERT INTO weather.stations_raw (station_id, station_jsonb) VALUES (%s,%s) ON CONFLICT (station_id) DO UPDATE SET station_jsonb = %s"
                     cur.execute(insert_sql,  ( result['id'],  json.dumps(result, indent=4, sort_keys=True),  json.dumps(result, indent=4, sort_keys=True) ) )
+                    # records_processed += 1
+                    
                 except:
                     print ('could not iterate through results')
 

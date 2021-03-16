@@ -21,7 +21,7 @@ limit = "&limit=1000"
 # Function gets NOAA station data (118,487 entries - 25 at a time),
 # store in file '/Users/chuckschultz/work/data/station_dump.json' and
 # log transaction in file '/Users/chuckschultz/work/data/noaa_stations.log'
-def get_noaa_stations(page_number = 0):
+def get_noaa_stations(page_number = 1):
     # batch_total = 0
     global max_page_number
     
@@ -46,7 +46,7 @@ def get_noaa_stations(page_number = 0):
 
                     
             if (page_number < max_page_number): 
-                page_number += 1
+                page_number += 1000
                 print ('get_noaa_stations looping')
                 get_noaa_stations(page_number)
                 

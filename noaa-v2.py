@@ -8,6 +8,7 @@ import json
 import time
 
 # Set variables
+noaa_token = os.environ['noaa_token']
 header = {'token': noaa_token}
 base_url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/data"
 dataset_id = "?datasetid=GHCND"

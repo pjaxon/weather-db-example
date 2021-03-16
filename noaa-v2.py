@@ -20,13 +20,17 @@ end_date = "&enddate=2021-03-10"
 limit = "&limit=1000"
 
 def get_station_params(station):
-    min_query = f"SELECT sr.station_jsonb ->> 'mindate' FROM weather.stations_raw sr WHERE sr.station_id = '{station}'"
-    max_query = f"SELECT sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr WHERE sr.station_id = '{station}'"
-    cur.execute(min_query)
-    start = cur.fetchall()
-    cur.execute(max_query)
-    end = cur.fetchall()
-    return start[0][0], end[0][0]
+    # min_query = f"SELECT sr.station_jsonb ->> 'mindate' FROM weather.stations_raw sr WHERE sr.station_id = '{station}'"
+    # max_query = f"SELECT sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr WHERE sr.station_id = '{station}'"
+    query = f"SELECT sr.station_jsonb ->> 'mindate', sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr WHERE sr.station_id = '{station}'"
+    # cur.execute(min_query)
+    # start = cur.fetchall()
+    # cur.execute(max_query)
+    # end = cur.fetchall()
+    cur.execute(query)
+    result = cur.fetchall()
+    #return start[0][0], end[0][0]
+    return result
 
 
 # Function gets NOAA data and loads into database

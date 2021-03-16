@@ -21,10 +21,12 @@ limit = "&limit=1000"
 
 def get_station_params(station):
     min_query = f"SELECT sr.station_jsonb ->> 'mindate' FROM weather.stations_raw sr WHERE sr.station_id = '{station}'"
-    #max_query = f"SELECT sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr WHERE sr.station_id = '{station}'"
+    max_query = f"SELECT sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr WHERE sr.station_id = '{station}'"
     cur.execute(min_query)
     start = cur.fetchall()
-    return start[0][0]
+    cur.execute(max_query)
+    end = cur.fetchall()
+    return start[0][0], end[0][0]
 
 
 # Function gets NOAA data and loads into database
@@ -73,7 +75,8 @@ def db_connect():
 
 cur = db_connect()
 
-minimum = get_station_params(station)
-print(minimum)
+end, start = get_station_params(station)
+print(end)
+print(start)
 
 #get_noaa()

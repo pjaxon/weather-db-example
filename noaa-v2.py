@@ -14,13 +14,13 @@ base_url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/data"
 dataset_id = "?datasetid=GHCND"
 data_types = ""
 locations = ""
-stations = ""
-start_date = "&startdate=2020-01-01"
-end_date = "&enddate=2020-01-03"
-limit = "&limit=10"
+stations = "&stationid=GHCND:ASN00004081"
+start_date = "&startdate=1944-05-01"
+end_date = "&enddate=1945-04-30"
+limit = "&limit=1000"
 
 # Function gets NOAA data and loads into database
-def get_noaa_stations(entry_number = 1):
+def get_noaa(entry_number = 1):
     try:
         time.sleep(.5)
         offset = "&offset=" + str(entry_number)
@@ -37,10 +37,10 @@ def get_noaa_stations(entry_number = 1):
             except:
                 print ('could not iterate through results')
         
-        # entry_number += 1000       
-        # if (entry_number < j['metadata']['resultset']['count']): 
-        #     #print('get_noaa_stations looping')
-        #     get_noaa_stations(entry_number)
+        entry_number += 1000       
+        if (entry_number < j['metadata']['resultset']['count']): 
+            #print('get_noaa_stations looping')
+            get_noaa(entry_number)
                 
     except:
         print('Function failed')
@@ -64,4 +64,4 @@ def db_connect():
 
 cur = db_connect()
 
-get_noaa_stations()
+get_noaa()

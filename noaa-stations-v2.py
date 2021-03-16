@@ -27,8 +27,10 @@ def get_noaa_stations(page_number = 0):
     
     try:
             time.sleep(.5)
+            
             offset = "&offset=" + str(page_number)
             url = base_url + dataset_id + limit + offset
+            print ('Starting page num: ' + str(page_number) + ', ' + url )
             dump = requests.get(url, headers=header)
             j = dump.json()
             # print (dump.json()) # j = r.json()
@@ -45,6 +47,7 @@ def get_noaa_stations(page_number = 0):
                     
             if (page_number < max_page_number): 
                 page_number += 1
+                print ('get_noaa_stations looping')
                 get_noaa_stations(page_number)
                 
     except TypeError: # If there are no results

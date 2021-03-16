@@ -20,8 +20,8 @@ end_date = "&enddate=2021-03-10"
 limit = "&limit=1000"
 
 def get_station_params(station):
-    min_query = f"SELECT sr.station_jsonb ->> 'mindate' FROM weather.stations_raw sr WHERE sr.station_id = {station}"
-    #max_query = f"SELECT sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr WHERE sr.station_id = {station}"
+    min_query = f"SELECT sr.station_jsonb ->> 'mindate' FROM weather.stations_raw sr WHERE sr.station_id = '{station}'"
+    #max_query = f"SELECT sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr WHERE sr.station_id = '{station}'"
     cur.execute(min_query)
     start = cur.fetchall()
     return start

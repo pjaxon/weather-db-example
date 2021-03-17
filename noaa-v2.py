@@ -41,7 +41,7 @@ def load_data(url, off_set=1):
                 print ('could not iterate through results')
         off_set += 1000
         if (off_set <= j['metadata']['resultset']['count']):
-            url = base_url + dataset_id + station_id + station + start_date + start + end_date + end + limit + offset + off_set
+            url = base_url + dataset_id + station_id + station + start_date + start + end_date + end + limit + offset + str(off_set)
             load_data(url, off_set)
     except:
         print('Function failed\n', url)
@@ -55,19 +55,19 @@ def get_noaa(station, off_set=1):
 
     for year in range(num_years):
         if num_years == 1:
-            url = base_url + dataset_id + station_id + station + start_date + start + end_date + end + limit + offset + off_set
+            url = base_url + dataset_id + station_id + station + start_date + start + end_date + end + limit + offset + str(off_set)
             load_data(url)
 
         elif year == 0:
-            url = base_url + dataset_id + station_id + station + start_date + start + end_date + str(start_dt.year) + "-12-31" + limit + offset + off_set
+            url = base_url + dataset_id + station_id + station + start_date + start + end_date + str(start_dt.year) + "-12-31" + limit + offset + str(off_set)
             load_data(url)
 
         elif year == num_years - 1:
-            url = base_url + dataset_id + station_id + station + start_date + str(end_dt.year) + "-01-01" + end_date + end + limit + offset + off_set
+            url = base_url + dataset_id + station_id + station + start_date + str(end_dt.year) + "-01-01" + end_date + end + limit + offset + str(off_set)
             load_data(url)
 
         else:
-            url = base_url + dataset_id + station_id + station + start_date + str(start_dt.year+year) + "-01-01" + end_date + str(start_dt.year+year) + "-12-31" + limit + offset + off_set
+            url = base_url + dataset_id + station_id + station + start_date + str(start_dt.year+year) + "-01-01" + end_date + str(start_dt.year+year) + "-12-31" + limit + offset + str(off_set)
             load_data(url)
 
 # Function that connects to database

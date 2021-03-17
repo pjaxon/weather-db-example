@@ -44,7 +44,7 @@ def load_data(url, off_set=1):
             url = base_url + dataset_id + station_id + station + start_date + start + end_date + end + limit + offset + off_set
             load_data(url, off_set)
     except:
-        print('Function failed')
+        print('Function failed\n', url)
 
 # Function gets NOAA data and loads into database
 def get_noaa(station):

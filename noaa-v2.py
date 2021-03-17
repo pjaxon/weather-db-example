@@ -13,7 +13,7 @@ header = {'token': noaa_token}
 base_url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/data"
 dataset_id = "?datasetid=GHCND"
 station_id = "&stationid="
-station = "GHCND:AEM00041217"
+station = "GHCND:ASN00004081"
 start_date = "&startdate="
 end_date = "&enddate="
 limit = "&limit=1000"
@@ -34,8 +34,8 @@ def load_data(url, off_set=1):
         j = r.json()
         for result in j['results']:
             try:
-                insert_sql = "INSERT INTO weather.noaa_raw (station_id, noaa_jsonb) VALUES (%s,%s) ON CONFLICT (station_id) DO UPDATE SET noaa_jsonb = %s"
-                cur.execute(insert_sql, (result['station'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True)))
+                insert_sql = "INSERT INTO weather.noaa_raw (station_id, date, data_type, noaa_jsonb) VALUES (%s,%s,%s,%s) ON CONFLICT (station_id, date, data_type) DO UPDATE SET noaa_jsonb = %s"
+                cur.execute(insert_sql, (result['station'], result['date'], result['datatype'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True)))
                 #print(result)
             except:
                 print ('could not iterate through results')

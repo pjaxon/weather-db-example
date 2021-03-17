@@ -47,8 +47,6 @@ def get_meta():
     for result in results:
         get_data(result)
 
-get_meta()
-
 def get_data(result): # result is a list of strings
     station, start, end = result[0], result[1], result[2] # strings
     start_yr, end_yr = start[:4], end[:4] # strings
@@ -71,7 +69,6 @@ def get_data(result): # result is a list of strings
             url = base_url + dataset_id + station_id + station + start_date + str(int(start_yr) + year) + "-01-01" + end_date + str(int(start_yr) + year) + "-12-31" + limit + offset
             load_data(url)
 
-
 def load_data(url, off_set=1):
     url2 = url + str(off_set)
     time.sleep(1)
@@ -90,86 +87,5 @@ def load_data(url, off_set=1):
 
 
 
+get_meta()
 
-
-
-
-
-
-
-
-
-# Function that returns mindate and maxdate for a given station
-def get_station_params(station):
-    query = f"SELECT sr.station_jsonb ->> 'mindate', sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr WHERE sr.station_id = '{station}'"
-    cur.execute(query)
-    result = cur.fetchall()
-    return result[0][0], result[0][1]
-
-# start, end = get_station_params(station)
-# print(start, end)
-# print(station)
-
-# url = base_url + dataset_id + station_id + station + start_date + "1997-01-01" + end_date + "1997-12-31" + limit + offset + str(off_set)
-# print(url)
-# Function that iterates through a year and loads data
-def load_data(url, off_set=1):
-    try:
-        time.sleep(1)
-        r = requests.get(url, headers=header)
-        j = r.json()
-        print(j['metadata']['resultset']['count'])
-        for result in j['results']:
-            try:
-                print(result)
-                #print(url)
-                # insert_sql = "INSERT INTO weather.noaa_raw (station_id, date, data_type, noaa_jsonb) VALUES (%s,%s,%s,%s) ON CONFLICT (station_id, date, data_type) DO UPDATE SET noaa_jsonb = %s"
-                # cur.execute(insert_sql, (result['station'], result['date'], result['datatype'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True)))
-            except:
-                print ('could not iterate through results')
-        off_set += 1000
-        if (off_set <= j['metadata']['resultset']['count']):
-            url = base_url + dataset_id + station_id + station + start_date + "1997-01-01" + end_date + "1997-12-31" + limit + offset + str(off_set)
-            load_data(url, off_set)
-    except:
-        print('Function failed\n', url)
-
-
-# load_data(url)
-
-
-# Function gets NOAA data and loads into database
-def get_noaa(station, off_set=1):
-    start, end = get_station_params(station)
-    start_dt = datetime.strptime(start, '%Y-%m-%d')
-    end_dt = datetime.strptime(end, '%Y-%m-%d')
-    num_years = end_dt.year - start_dt.year + 1
-
-    for year in range(num_years):
-        if num_years == 1:
-            url = base_url + dataset_id + station_id + station + start_date + start + end_date + end + limit + offset + str(off_set)
-            load_data(url)
-
-        elif year == 0:
-            url = base_url + dataset_id + station_id + station + start_date + start + end_date + str(start_dt.year) + "-12-31" + limit + offset + str(off_set)
-            load_data(url)
-
-        elif year == num_years - 1:
-            url = base_url + dataset_id + station_id + station + start_date + str(end_dt.year) + "-01-01" + end_date + end + limit + offset + str(off_set)
-            load_data(url)
-
-        else:
-            url = base_url + dataset_id + station_id + station + start_date + str(start_dt.year+year) + "-01-01" + end_date + str(start_dt.year+year) + "-12-31" + limit + offset + str(off_set)
-            load_data(url)
-
-
-
-# Function that gets each station id and loads data for each station
-def load_db():
-    query = "SELECT sr.station_id FROM weather.stations_raw sr"
-    cur.execute(query)
-    result = cur.fetchall()
-    for station in result:
-        get_noaa(station[0])
-
-#load_db()

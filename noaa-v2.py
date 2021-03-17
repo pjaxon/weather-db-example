@@ -13,7 +13,7 @@ header = {'token': noaa_token}
 base_url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/data"
 dataset_id = "?datasetid=GHCND"
 station_id = "&stationid="
-station = "GHCND:ASN00004081"
+#station = "GHCND:ASN00004081"
 start_date = "&startdate="
 end_date = "&enddate="
 limit = "&limit=1000"
@@ -94,11 +94,11 @@ cur = db_connect()
 
 # Function that gets each station id and loads data for each station
 def load_db():
-    query = "SELECT sr.station_id FROM weather.stations_raw sr LIMIT 100"
+    query = "SELECT sr.station_id FROM weather.stations_raw sr LIMIT 2"
     cur.execute(query)
     result = cur.fetchall()
     for station in result:
-        print(station[0])
-        #get_noaa(station[0])
+        #print(station[0])
+        get_noaa(station[0])
 
 load_db()

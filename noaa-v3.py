@@ -40,7 +40,6 @@ end_date = "&enddate="
 limit = "&limit=1000"
 offset = "&offset="
 off_set = 1
-url = base_url + dataset_id + station_id + station + start_date + start + end_date + end + limit + offset + str(off_set)
 
 # Function that returns mindate and maxdate for a given station
 def get_station_params(station):
@@ -49,6 +48,10 @@ def get_station_params(station):
     result = cur.fetchall()
     return result[0][0], result[0][1]
 
+start, end = get_station_params(station)
+print(start, end)
+
+url = base_url + dataset_id + station_id + station + start_date + start + end_date + end + limit + offset + str(off_set)
 # Function that iterates through a year and loads data
 def load_data(url, off_set=1):
     try:
@@ -70,9 +73,6 @@ def load_data(url, off_set=1):
     except:
         print('Function failed\n', url)
 
-
-start, end = get_station_params(station)
-print(start, end)
 
 load_data()
 

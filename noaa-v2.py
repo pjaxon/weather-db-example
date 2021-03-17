@@ -28,13 +28,15 @@ def get_station_params(station):
 # Function that iterates through a year and loads data
 def load_data(url, off_set=1):
     try:
+        print(url)
         time.sleep(1)
         r = requests.get(url, headers=header)
         j = r.json()
         for result in j['results']:
             try:
-                insert_sql = "INSERT INTO weather.noaa_raw (station_id, date, data_type, noaa_jsonb) VALUES (%s,%s,%s,%s) ON CONFLICT (station_id, date, data_type) DO UPDATE SET noaa_jsonb = %s"
-                cur.execute(insert_sql, (result['station'], result['date'], result['datatype'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True)))
+                pass
+                # insert_sql = "INSERT INTO weather.noaa_raw (station_id, date, data_type, noaa_jsonb) VALUES (%s,%s,%s,%s) ON CONFLICT (station_id, date, data_type) DO UPDATE SET noaa_jsonb = %s"
+                # cur.execute(insert_sql, (result['station'], result['date'], result['datatype'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True)))
             except:
                 print ('could not iterate through results')
         off_set += 1000
@@ -50,6 +52,9 @@ def get_noaa(station, off_set=1):
     start_dt = datetime.strptime(start, '%Y-%m-%d')
     end_dt = datetime.strptime(end, '%Y-%m-%d')
     num_years = end_dt.year - start_dt.year + 1
+    print(start, end)
+    print(station)
+    
 
     for year in range(num_years):
         if num_years == 1:
@@ -88,7 +93,7 @@ def db_connect():
 
 # Function that gets each station id and loads data for each station
 def load_db():
-    query = "SELECT sr.station_id FROM weather.stations_raw sr"
+    query = "SELECT sr.station_id FROM weather.stations_raw sr LIMIT 2"
     cur.execute(query)
     result = cur.fetchall()
     for station in result:

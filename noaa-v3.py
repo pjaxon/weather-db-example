@@ -50,8 +50,10 @@ def get_station_params(station):
 
 start, end = get_station_params(station)
 print(start, end)
+print(station)
 
 url = base_url + dataset_id + station_id + station + start_date + start + end_date + "1983-12-31" + limit + offset + str(off_set)
+print(url)
 # Function that iterates through a year and loads data
 def load_data(url, off_set=1):
     try:
@@ -75,7 +77,7 @@ def load_data(url, off_set=1):
         print('Function failed\n', url)
 
 
-load_data(url)
+#load_data(url)
 
 
 # Function gets NOAA data and loads into database

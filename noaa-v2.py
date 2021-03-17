@@ -13,7 +13,6 @@ header = {'token': noaa_token}
 base_url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/data"
 dataset_id = "?datasetid=GHCND"
 station_id = "&stationid="
-#station = "GHCND:ASN00004081"
 start_date = "&startdate="
 end_date = "&enddate="
 limit = "&limit=1000"
@@ -29,14 +28,13 @@ def get_station_params(station):
 # Function that iterates through a year and loads data
 def load_data(url, off_set=1):
     try:
-        time.sleep(.5)
+        time.sleep(1)
         r = requests.get(url, headers=header)
         j = r.json()
         for result in j['results']:
             try:
                 insert_sql = "INSERT INTO weather.noaa_raw (station_id, date, data_type, noaa_jsonb) VALUES (%s,%s,%s,%s) ON CONFLICT (station_id, date, data_type) DO UPDATE SET noaa_jsonb = %s"
                 cur.execute(insert_sql, (result['station'], result['date'], result['datatype'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True)))
-                #print(result)
             except:
                 print ('could not iterate through results')
         off_set += 1000
@@ -88,17 +86,15 @@ def db_connect():
     cur = conn.cursor(cursor_factory=DictCursor)
     return cur
 
-cur = db_connect()
-
-#get_noaa(station)
-
 # Function that gets each station id and loads data for each station
 def load_db():
-    query = "SELECT sr.station_id FROM weather.stations_raw sr LIMIT 2"
+    query = "SELECT sr.station_id FROM weather.stations_raw sr"
     cur.execute(query)
     result = cur.fetchall()
     for station in result:
-        #print(station[0])
         get_noaa(station[0])
+
+
+cur = db_connect()
 
 load_db()

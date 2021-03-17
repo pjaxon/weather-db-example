@@ -46,9 +46,11 @@ def get_meta():
     cur.execute(query)
     results = cur.fetchall()
     for result in results:
-        return result
+        print(result)
 
-print(get_meta())
+get_meta()
+
+
 
 
 

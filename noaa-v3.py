@@ -74,7 +74,7 @@ def load_data(url, off_set=1):
         print('Function failed\n', url)
 
 
-load_data()
+load_data(url)
 
 
 # Function gets NOAA data and loads into database

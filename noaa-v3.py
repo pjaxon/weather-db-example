@@ -58,6 +58,7 @@ def load_data(url, off_set=1):
         time.sleep(1)
         r = requests.get(url, headers=header)
         j = r.json()
+        print(j['metadata']['resultset']['count'])
         for result in j['results']:
             try:
                 print(result)

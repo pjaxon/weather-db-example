@@ -94,11 +94,11 @@ cur = db_connect()
 
 # Function that gets each station id and loads data for each station
 def load_db():
-    query = "SELECT sr.station_id FROM weather.stations_raw sr LIMIT 10"
+    query = "SELECT sr.station_id FROM weather.stations_raw sr LIMIT 100"
     cur.execute(query)
     result = cur.fetchall()
     for station in result:
-        print(station)
-        #get_noaa(station)
+        print(station[0])
+        #get_noaa(station[0])
 
 load_db()

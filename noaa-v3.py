@@ -41,6 +41,28 @@ limit = "&limit=1000"
 offset = "&offset="
 off_set = 1
 
+def get_meta():
+    query = "SELECT sr.station_id, sr.station_jsonb.mindate, sr.station_jsonb.maxdate FROM weather.stations_raw sr LIMIT 5"
+    cur.execute(query)
+    results = cur.fetchall()
+    for result in results:
+        return result
+
+print(get_meta())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Function that returns mindate and maxdate for a given station
 def get_station_params(station):
     query = f"SELECT sr.station_jsonb ->> 'mindate', sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr WHERE sr.station_id = '{station}'"
@@ -48,12 +70,12 @@ def get_station_params(station):
     result = cur.fetchall()
     return result[0][0], result[0][1]
 
-start, end = get_station_params(station)
-print(start, end)
-print(station)
+# start, end = get_station_params(station)
+# print(start, end)
+# print(station)
 
-url = base_url + dataset_id + station_id + station + start_date + "1997-01-01" + end_date + "1997-12-31" + limit + offset + str(off_set)
-print(url)
+# url = base_url + dataset_id + station_id + station + start_date + "1997-01-01" + end_date + "1997-12-31" + limit + offset + str(off_set)
+# print(url)
 # Function that iterates through a year and loads data
 def load_data(url, off_set=1):
     try:
@@ -77,7 +99,7 @@ def load_data(url, off_set=1):
         print('Function failed\n', url)
 
 
-load_data(url)
+# load_data(url)
 
 
 # Function gets NOAA data and loads into database

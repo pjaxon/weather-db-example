@@ -34,25 +34,59 @@ header = {'token': noaa_token}
 base_url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/data"
 dataset_id = "?datasetid=GHCND"
 station_id = "&stationid="
-station = "GHCND:AEM00041217"
+#station = "GHCND:AEM00041217"
 start_date = "&startdate="
 end_date = "&enddate="
 limit = "&limit=1000"
 offset = "&offset="
-off_set = 1
 
 def get_meta():
     query = "SELECT sr.station_id, sr.station_jsonb ->> 'mindate', sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr LIMIT 5"
     cur.execute(query)
     results = cur.fetchall()
     for result in results:
-        print(result)
+        get_data(result)
 
 get_meta()
 
+def get_data(result): # result is a list of strings
+    station, start, end = result[0], result[1], result[2] # strings
+    start_yr, end_yr = start[:4], end[:4] # strings
+    num_years = int(end_yr) - int(start_yr) +1 # integers
+
+    for year in range(num_years):
+        if num_years == 1:
+            url = base_url + dataset_id + station_id + station + start_date + start + end_date + end + limit + offset
+            load_data(url)
+
+        elif year == 0:
+            url = base_url + dataset_id + station_id + station + start_date + start + end_date + start_yr + "-12-31" + limit + offset
+            load_data(url)
+
+        elif year == num_years - 1:
+            url = base_url + dataset_id + station_id + station + start_date + end_yr + "-01-01" + end_date + end + limit + offset
+            load_data(url)
+
+        else:
+            url = base_url + dataset_id + station_id + station + start_date + str(int(start_yr) + year) + "-01-01" + end_date + str(int(start_yr) + year) + "-12-31" + limit + offset
+            load_data(url)
 
 
-
+def load_data(url, off_set=1):
+    url2 = url + str(off_set)
+    time.sleep(1)
+    r = requests.get(url2, headers=header)
+    j = r.json()
+    for result in j['results']:
+        try:
+            print(result)
+            # insert_sql = "INSERT INTO weather.noaa_raw (station_id, date, data_type, noaa_jsonb) VALUES (%s,%s,%s,%s) ON CONFLICT (station_id, date, data_type) DO UPDATE SET noaa_jsonb = %s"
+            # cur.execute(insert_sql, (result['station'], result['date'], result['datatype'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True)))
+        except:
+            print ('could not iterate through results')
+    off_set += 1000
+    if (off_set <= j['metadata']['resultset']['count']):
+        load_data(url, off_set)
 
 
 

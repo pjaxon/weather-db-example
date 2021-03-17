@@ -34,7 +34,9 @@ def load_data(url, off_set=1):
         j = r.json()
         for result in j['results']:
             try:
-                print(result)
+                insert_sql = "INSERT INTO weather.noaa_raw (station_id, noaa_jsonb) VALUES (%s,%s) ON CONFLICT (station_id) DO UPDATE SET noaa_jsonb = %s"
+                cur.execute(insert_sql, (result['station'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True)))
+                #print(result)
             except:
                 print ('could not iterate through results')
         off_set += 1000

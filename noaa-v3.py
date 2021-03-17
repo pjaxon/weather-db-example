@@ -42,7 +42,7 @@ offset = "&offset="
 off_set = 1
 
 def get_meta():
-    query = "SELECT sr.station_id, sr.station_jsonb.mindate, sr.station_jsonb.maxdate FROM weather.stations_raw sr LIMIT 5"
+    query = "SELECT sr.station_id, sr.station_jsonb ->> 'mindate', sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr LIMIT 5"
     cur.execute(query)
     results = cur.fetchall()
     for result in results:

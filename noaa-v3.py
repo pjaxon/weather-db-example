@@ -1,4 +1,4 @@
-## This script gets data from NOAA, and stores it in weather.raw
+## This script gets data from NOAA, and stores it in weather.noaa_raw
 import os
 import psycopg2
 from psycopg2.extras import DictCursor
@@ -34,12 +34,13 @@ header = {'token': noaa_token}
 base_url = "https://www.ncdc.noaa.gov/cdo-web/api/v2/data"
 dataset_id = "?datasetid=GHCND"
 station_id = "&stationid="
-#station = "GHCND:AEM00041217"
 start_date = "&startdate="
 end_date = "&enddate="
 limit = "&limit=1000"
 offset = "&offset="
 
+# Function gets weather station id, mindate and maxdate
+# Calls get_data() for each weather station's data
 def get_meta():
     query = "SELECT sr.station_id, sr.station_jsonb ->> 'mindate', sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr LIMIT 5"
     cur.execute(query)
@@ -47,10 +48,11 @@ def get_meta():
     for result in results:
         get_data(result)
 
+# Function gets data by customizing the iterations from the metadata and calling load_data()
 def get_data(result): # result is a list of strings
-    station, start, end = result[0], result[1], result[2] # strings
-    start_yr, end_yr = start[:4], end[:4] # strings
-    num_years = int(end_yr) - int(start_yr) +1 # integers
+    station, start, end = result[0], result[1], result[2]
+    start_yr, end_yr = start[:4], end[:4]
+    num_years = int(end_yr) - int(start_yr) +1
 
     for year in range(num_years):
         if num_years == 1:
@@ -69,6 +71,7 @@ def get_data(result): # result is a list of strings
             url = base_url + dataset_id + station_id + station + start_date + str(int(start_yr) + year) + "-01-01" + end_date + str(int(start_yr) + year) + "-12-31" + limit + offset
             load_data(url)
 
+# Function gets the data and inserts it into the database, 1000 at a time
 def load_data(url, off_set=1):
     try:
         url2 = url + str(off_set)

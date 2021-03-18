@@ -140,8 +140,9 @@ link = result["data"]["emdat_public"]["link"]
 # Function to get data and inserts into database
 def get_emdat():
     r = requests.get(link, headers=headers)
-    data_dict = xmltodict.parse(r)
-    json_data = json.dumps(data_dict)
+    print(r)
+    # data_dict = xmltodict.parse(r)
+    # json_data = json.dumps(data_dict)
     
 
 

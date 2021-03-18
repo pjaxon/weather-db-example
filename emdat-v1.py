@@ -141,11 +141,11 @@ link = result["data"]["emdat_public"]["link"]
 # Function to get data and inserts into database
 def get_emdat():
     r = requests.get(link, headers=headers)
-    with open('/Users/chuckschultz/work/data/emdat_data.xml', 'wb') as file: # store data
+    with open('/home/theraceblogger/temp_data/emdat_data.csv', 'wb') as file: # store data
         file.write(r.content)
-    with open('/Users/chuckschultz/work/data/emdat_data.xml', 'r') as xml_file: # store data
-        data_dict = xmltodict.parse(xml_file.read())
-    json_data = json.dumps(data_dict)
+    # with open('/Users/chuckschultz/work/data/emdat_data.xml', 'rb') as xml_file: # store data
+    #     data_dict = xmltodict.parse(xml_file.read())
+    # json_data = json.dumps(data_dict)
 
     
 

@@ -11,6 +11,7 @@ import requests
 from datetime import datetime
 import json
 import xmltodict
+import xml.etree.ElementTree as ET
 import time
 
 
@@ -140,9 +141,16 @@ link = result["data"]["emdat_public"]["link"]
 # Function to get data and inserts into database
 def get_emdat():
     r = requests.get(link, headers=headers)
-    
-    data_dict = xmltodict.parse(r.content)
+    tree = ET.parse(r)
+    xml_data = tree.getroot()
+    xmlstr = ET.tostring(xml_data, encoding='utf-8', method='xml')
+    data_dict = dict(xmltodict.parse(xmlstr))
+
+    #data_dict = xmltodict.parse(r.content)
     # json_data = json.dumps(data_dict)
+
+
+    
     
 
 

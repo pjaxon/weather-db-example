@@ -10,6 +10,7 @@ from psycopg2.extras import DictCursor
 import requests
 from datetime import datetime
 import json
+import xmltodict
 import time
 
 
@@ -139,9 +140,9 @@ link = result["data"]["emdat_public"]["link"]
 # Function to get data and inserts into database
 def get_emdat():
     r = requests.get(link, headers=headers)
-    j = r.json()
-    for result in j['results']:
-        print(result)
+    data_dict = xmltodict.parse(r.content)
+    json_data = json.dumps(data_dict)
+    
 
 
 

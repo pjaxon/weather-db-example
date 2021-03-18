@@ -141,7 +141,7 @@ link = result["data"]["emdat_public"]["link"]
 # Function to get data and inserts into database
 def get_emdat():
     r = requests.get(link, headers=headers)
-    tree = ET.parse(r)
+    tree = ET.parse(r.content)
     xml_data = tree.getroot()
     xmlstr = ET.tostring(xml_data, encoding='utf-8', method='xml')
     data_dict = dict(xmltodict.parse(xmlstr))

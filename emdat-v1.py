@@ -16,24 +16,24 @@ import time
 
 
 # Function that connects to database
-def db_connect():
-    db_name = os.environ['db_name']
-    db_user = os.environ['db_user']
-    db_host = os.environ['db_host']
-    db_credentials = os.environ['db_creds']
+# def db_connect():
+#     db_name = os.environ['db_name']
+#     db_user = os.environ['db_user']
+#     db_host = os.environ['db_host']
+#     db_credentials = os.environ['db_creds']
   
-    conn_string = "dbname='" + str(db_name) + "' user='" + str(db_user) + "' host='" + str(db_host) + "' password='" + str(db_credentials) + "'"
+#     conn_string = "dbname='" + str(db_name) + "' user='" + str(db_user) + "' host='" + str(db_host) + "' password='" + str(db_credentials) + "'"
 
-    try:
-        conn = psycopg2.connect(str(conn_string))
-        conn.autocommit = True
-    except:
-        print("Unable to connect to the database")
+#     try:
+#         conn = psycopg2.connect(str(conn_string))
+#         conn.autocommit = True
+#     except:
+#         print("Unable to connect to the database")
 
-    cur = conn.cursor(cursor_factory=DictCursor)
-    return cur
+#     cur = conn.cursor(cursor_factory=DictCursor)
+#     return cur
 
-cur = db_connect()
+# cur = db_connect()
 
 
 ## classif
@@ -141,13 +141,13 @@ link = result["data"]["emdat_public"]["link"]
 # Function to get data and inserts into database
 def get_emdat():
     r = requests.get(link, headers=headers)
-    tree = ET.parse(r.text)
-    xml_data = tree.getroot()
-    xmlstr = ET.tostring(xml_data, encoding='utf-8', method='xml')
-    data_dict = dict(xmltodict.parse(xmlstr))
+    with open('/Users/chuckschultz/work/data/emdat_data.xml', 'wb') as file: # store data
+        file.write(r.content)
+    with open('/Users/chuckschultz/work/data/emdat_data.xml', 'r') as xml_file: # store data
+        data_dict = xmltodict.parse(xml_file.read())
+    json_data = json.dumps(data_dict)
 
-    #data_dict = xmltodict.parse(r.content)
-    # json_data = json.dumps(data_dict)
+    
 
 
     

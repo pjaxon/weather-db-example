@@ -20,7 +20,7 @@ limit = "&limit=1000"
 def get_noaa_stations():
     off = 1
     try:
-        for batch in range(2): # range(119)
+        for batch in range(119): # range(119)
             time.sleep(10)
             offset = "&offset=" + str(off)
             url = base_url + dataset_id + limit + offset

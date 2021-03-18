@@ -13,7 +13,7 @@ def db_connect():
   db_user = os.environ['db_user']
   db_host = os.environ['db_host']
   db_credentials = os.environ['db_creds']
- 
+
   conn_string = "dbname='" + str(db_name) + "' user='" + str(db_user) + "' host='" + str(db_host) + "' password='" + str(db_credentials) + "'"
 
   try:
@@ -41,10 +41,17 @@ def select_data():
 
 # Push data to database
 
-def insert_data():
-	test_sql = "INSERT INTO weather.noaa_stations_raw VALUES ('/home/theraceblogger/temp_data/station_dump1.json')"
-	dwh_cur.execute(test_sql)
+#def insert_data():
+#	test_sql = "INSERT INTO weather.noaa_stations_raw VALUES ('/home/theraceblogger/temp_data/station_dump1.json')"
+#	dwh_cur.execute(test_sql)
 
+def insert_data():
+        test_sql = "CREATE TEMP TABLE weather_stations(info json);"
+        dwh_cur.execute(test_sql)
+        test_sql = "UPDATE weather_stations SET content 'cat /home/theraceblogger/temp_data/station_dump1.json';"
+        dwh_cur.execute(test_sql)
+        test_sql = "INSERT INTO weather.noaa_stations_raw VALUES (:'content');"
+        dwh_cur.execute(test_sql)
 insert_data()
 
 

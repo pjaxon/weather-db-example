@@ -38,10 +38,16 @@ cur = db_connect()
 query = 'SELECT station_jsonb FROM weather.stations_raw LIMIT 10'
 cur.execute(query)
 results = cur.fetchall()
+
+flat_results = []
 for result in results:
-    print(result[0])
+    flat_results.append(result[0])
+
+res_pd = pd.DataFrame(flat_results)
+
+
 #print(json.loads(results))
-#res_pd = pd.read_json(results, orient='records')
+
 #print(type(res_pd))
 #print(res_pd)
 #print(results[0][0], results[1][0])

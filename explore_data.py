@@ -38,5 +38,5 @@ query = 'SELECT column_name FROM information_schema.columns WHERE table_schema =
 cur.execute(query)
 results = cur.fetchall()
 for result in results:
-    print(result[1]['name'])
+    print(result)
 

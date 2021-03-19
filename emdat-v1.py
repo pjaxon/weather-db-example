@@ -108,14 +108,10 @@ url = 'https://public.emdat.be/api/graphql'
 headers = {"auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxNTQxMCwidXNlcm5hbWUiOiJ0aGVyYWNlYmxvZ2dlciJ9.jl04tgSr0ESF3hwgp8AmKQXuODrVOqKcJSrRNAnvj_E"}
 opName = "emdat_public"
 varz =  {
-    "classif": geophysical,
-	"iso": asia,
-    "from": 1980,
-	"to": 1980
-	# "classif": natural + complex_disasters, # (list)type of disasters - concatenate using +
-	# "iso": asia + africa + americas + europe + oceania, # (list)countries of disasters - concatenate using +
-    # "from": 1900, #(int)start date - 1900 to 2021
-	# "to": 2021 # (int)end date - 1900 to 2021
+	"classif": natural + complex_disasters, # (list)type of disasters - concatenate using +
+	"iso": asia + africa + americas + europe + oceania, # (list)countries of disasters - concatenate using +
+    "from": 1900, #(int)start date - 1900 to 2021
+	"to": 2021 # (int)end date - 1900 to 2021
 }
 
 # Function using GraphQL to make the API call for link to data API
@@ -137,32 +133,13 @@ def get_emdat():
     csv_content = pd.read_excel(r.content, header=6)
     j = csv_content.to_json(index=False, orient='table')
     results = json.loads(j)
+    
     for result in results['data']:
         try:
             insert_sql = "INSERT INTO weather.emdat_raw (disaster_no, emdat_jsonb) VALUES (%s,%s) ON CONFLICT (disaster_no) DO UPDATE SET emdat_jsonb = %s"
-            cur.execute(insert_sql, (result['Dis No'], json.dumps(result, indent=4, sort_keys=False), json.dumps(result, indent=4, sort_keys=False)))
+            cur.execute(insert_sql, (result['Dis No'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True)))
         except:
             print ('could not iterate through results')
 
 
 get_emdat()
-
-    
-# # Function gets the data and inserts it into the database, 1000 at a time
-# def load_data(url, off_set=1):
-#     try:
-#         url2 = url + str(off_set)
-#         time.sleep(1)
-#         r = requests.get(url2, headers=header)
-#         j = r.json()
-#         for result in j['results']:
-#             try:
-#                 insert_sql = "INSERT INTO weather.noaa_raw (station_id, date, data_type, noaa_jsonb) VALUES (%s,%s,%s,%s) ON CONFLICT (station_id, date, data_type) DO UPDATE SET noaa_jsonb = %s"
-#                 cur.execute(insert_sql, (result['station'], result['date'], result['datatype'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True)))
-#             except:
-#                 print ('could not iterate through results')
-#         off_set += 1000
-#         if (off_set <= j['metadata']['resultset']['count']):
-#             load_data(url, off_set)
-#     except KeyError:
-#         pass

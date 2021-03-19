@@ -45,7 +45,7 @@ for result in results:
 
 res_pd = pd.DataFrame(flat_results)
 
-print(res_pd.value_counts())
+print(res_pd.maxdate.value_counts())
 
 
 

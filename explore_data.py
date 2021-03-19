@@ -37,6 +37,4 @@ query = 'SELECT column_name FROM information_schema.columns WHERE table_schema =
 #query = 'SELECT * FROM weather.stations_raw LIMIT 10'
 cur.execute(query)
 results = cur.fetchall()
-for result in results:
-    print(result)
-
+print(results[0], results[1])

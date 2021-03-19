@@ -43,6 +43,8 @@ flat_results = []
 for result in results:
     flat_results.append(result[0])
 
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
 df = pd.DataFrame(flat_results)
 #print(df)
 df.to_csv('/home/theraceblogger/weather-db-example/disaster.csv', index=False)

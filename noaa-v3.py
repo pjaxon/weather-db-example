@@ -42,7 +42,7 @@ offset = "&offset="
 # Function gets weather station id, mindate and maxdate
 # Calls get_data() for each weather station's data
 def get_meta():
-    query = "SELECT sr.station_id, sr.station_jsonb ->> 'mindate', sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr LIMIT 5"
+    query = "SELECT sr.station_id, sr.station_jsonb ->> 'mindate', sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr LIMIT 1"
     cur.execute(query)
     results = cur.fetchall()
     for result in results:
@@ -78,6 +78,7 @@ def load_data(url, off_set=1):
         time.sleep(1)
         r = requests.get(url2, headers=header)
         j = r.json()
+        print(j)
         for result in j['results']:
             try:
                 insert_sql = "INSERT INTO weather.noaa_raw (station_id, date, data_type, noaa_jsonb) VALUES (%s,%s,%s,%s) ON CONFLICT (station_id, date, data_type) DO UPDATE SET noaa_jsonb = %s"

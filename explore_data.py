@@ -44,6 +44,7 @@ for result in results:
     flat_results.append(result[0])
 
 res_pd = pd.DataFrame(flat_results)
+print(res_pd)
 
 
 #print(json.loads(results))

@@ -140,7 +140,7 @@ def get_emdat():
     for result in results['data']:
         try:
             insert_sql = "INSERT INTO weather.emdat_raw (disaster_no, emdat_jsonb) VALUES (%s,%s) ON CONFLICT (disaster_no) DO UPDATE SET emdat_jsonb = %s"
-            cur.execute(insert_sql, (result['Dis No'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True)))
+            cur.execute(insert_sql, (result['Dis No'], json.dumps(result, indent=4, sort_keys=False), json.dumps(result, indent=4, sort_keys=False)))
         except:
             print ('could not iterate through results')
 

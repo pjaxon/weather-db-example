@@ -33,7 +33,7 @@ cur = db_connect()
 # print(results)
 
 #query = 'SELECT * FROM information_schema.columns WHERE table_schema = "weather.stations_raw" AND table_name = "stations_raw" '
-query = 'SELECT column_name FROM information_schema.columns WHERE table_schema = 'weather' AND table_name = 'stations_raw''
+query = 'SELECT column_name FROM information_schema.columns WHERE table_schema = \'weather\' AND table_name = \'stations_raw\''
 #query = 'SELECT * FROM weather.stations_raw LIMIT 10'
 cur.execute(query)
 results = cur.fetchall()

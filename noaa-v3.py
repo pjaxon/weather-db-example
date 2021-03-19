@@ -42,7 +42,7 @@ offset = "&offset="
 # Function gets weather station id, mindate and maxdate
 # Calls get_data() for each weather station's data
 def get_meta():
-    query = "SELECT sr.station_id, sr.station_jsonb ->> 'mindate', sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr LIMIT 1"
+    query = "SELECT sr.station_id, sr.station_jsonb ->> 'mindate', sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr"
     cur.execute(query)
     results = cur.fetchall()
     for result in results:

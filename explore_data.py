@@ -27,7 +27,13 @@ def db_connect():
 
 cur = db_connect()
 
-query = 'SELECT COUNT(*) FROM weather.noaa_raw'
+# query = 'SELECT COUNT(*) FROM weather.noaa_raw'
+# cur.execute(query)
+# results = cur.fetchall()
+# print(results)
+
+query = 'SELECT * FROM weather.stations_raw LIMIT 10'
 cur.execute(query)
 results = cur.fetchall()
-print(results)
+for result in results:
+    print(result)

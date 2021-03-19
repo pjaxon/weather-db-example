@@ -44,8 +44,8 @@ for result in results:
     flat_results.append(result[0])
 
 df = pd.DataFrame(flat_results)
-print(df)
-#df.to_csv('/home/theraceblogger/weather-db-example/disaster.csv', index=False)
+#print(df)
+df.to_csv('/home/theraceblogger/weather-db-example/disaster.csv', index=False)
 
 #print(res_pd.maxdate.value_counts())
 

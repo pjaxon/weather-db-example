@@ -32,9 +32,12 @@ cur = db_connect()
 # results = cur.fetchall()
 # print(results)
 
-#query = 'SELECT * FROM information_schema.columns WHERE table_schema = "weather.stations_raw" AND table_name = "stations_raw" '
-query = 'SELECT column_name FROM information_schema.columns WHERE table_schema = \'weather\' AND table_name = \'stations_raw\''
+
+#query = 'SELECT column_name FROM information_schema.columns WHERE table_schema = \'weather\' AND table_name = \'stations_raw\''
 #query = 'SELECT * FROM weather.stations_raw LIMIT 10'
+query = 'SELECT station_jsonb FROM weather.stations_raw'
 cur.execute(query)
 results = cur.fetchall()
-print(results[0][0], results[1][0])
+res_pd = pd.DataFrame.from_dict(results)
+res_pd
+#print(results[0][0], results[1][0])

@@ -1,39 +1,32 @@
-## This script gets data from EMDAT
-## Variables needed for api call:
-##   classif: (list)type of disasters - concatenate using +
-##   iso: (list)countries of disasters - concatenate using +
-##   from: (int)start date - 1900 to 2021
-##   to: (int)end date - 1900 to 2021
+## This script gets data from EMDAT and loads it into the database
 import os
 import psycopg2
 from psycopg2.extras import DictCursor
 import requests
 from datetime import datetime
 import json
-import xmltodict
-import xml.etree.ElementTree as ET
-import time
+import pandas as pd
 
 
 # Function that connects to database
-# def db_connect():
-#     db_name = os.environ['db_name']
-#     db_user = os.environ['db_user']
-#     db_host = os.environ['db_host']
-#     db_credentials = os.environ['db_creds']
+def db_connect():
+    db_name = os.environ['db_name']
+    db_user = os.environ['db_user']
+    db_host = os.environ['db_host']
+    db_credentials = os.environ['db_creds']
   
-#     conn_string = "dbname='" + str(db_name) + "' user='" + str(db_user) + "' host='" + str(db_host) + "' password='" + str(db_credentials) + "'"
+    conn_string = "dbname='" + str(db_name) + "' user='" + str(db_user) + "' host='" + str(db_host) + "' password='" + str(db_credentials) + "'"
 
-#     try:
-#         conn = psycopg2.connect(str(conn_string))
-#         conn.autocommit = True
-#     except:
-#         print("Unable to connect to the database")
+    try:
+        conn = psycopg2.connect(str(conn_string))
+        conn.autocommit = True
+    except:
+        print("Unable to connect to the database")
 
-#     cur = conn.cursor(cursor_factory=DictCursor)
-#     return cur
+    cur = conn.cursor(cursor_factory=DictCursor)
+    return cur
 
-# cur = db_connect()
+cur = db_connect()
 
 
 ## classif
@@ -115,10 +108,10 @@ url = 'https://public.emdat.be/api/graphql'
 headers = {"auth": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxNTQxMCwidXNlcm5hbWUiOiJ0aGVyYWNlYmxvZ2dlciJ9.jl04tgSr0ESF3hwgp8AmKQXuODrVOqKcJSrRNAnvj_E"}
 opName = "emdat_public"
 varz =  {
-    "classif": geophysical, # (list)type of disasters - concatenate using +
-	"iso": asia, # (list)countries of disasters - concatenate using +
-    "from": 1980, #(int)start date - 1900 to 2021
-	"to": 1985 # (int)end date - 1900 to 2021
+    "classif": geophysical,
+	"iso": asia,
+    "from": 1980,
+	"to": 1980
 	# "classif": natural + complex_disasters, # (list)type of disasters - concatenate using +
 	# "iso": asia + africa + americas + europe + oceania, # (list)countries of disasters - concatenate using +
     # "from": 1900, #(int)start date - 1900 to 2021
@@ -141,41 +134,35 @@ link = result["data"]["emdat_public"]["link"]
 # Function to get data and inserts into database
 def get_emdat():
     r = requests.get(link, headers=headers)
-    with open('/home/theraceblogger/temp_data/emdat_data.csv', 'wb') as file: # store data
-        file.write(r.content)
-    # with open('/Users/chuckschultz/work/data/emdat_data.xml', 'rb') as xml_file: # store data
-    #     data_dict = xmltodict.parse(xml_file.read())
-    # json_data = json.dumps(data_dict)
+    csv_content = pd.read_excel(r.content, header=6)
+    j = csv_content.to_json(index=False, orient='table')
+    results = json.loads(j)
+    for result in results['data']:
+        try:
+            insert_sql = "INSERT INTO weather.emdat_raw (disaster_no, emdat_jsonb) VALUES (%s,%s) ON CONFLICT (disaster_no) DO UPDATE SET emdat_jsonb = %s"
+            cur.execute(insert_sql, (result['Dis No'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True)))
+        except:
+            print ('could not iterate through results')
 
-    
-
-
-    
-    
-
-
-
-
-
-
-
-
-# # Function to get data and inserts into database
-# def get_emdat():
-#     try:
-#         link_to_hit = result["data"]["emdat_public"]["link"]
-#         dump = requests.get(link_to_hit, headers=headers)
-#         count = result["data"]["emdat_public"]["count"]
-#         print("Link:", link_to_hit, "\nCount:", count)
-        
-#         with open('/Users/chuckschultz/work/data/emdat_dump.xlsx', 'wb') as file: # store data
-#             file.write(dump.content)
-#         with open('/Users/chuckschultz/work/data/emdat.log', 'a') as file: # log transaction
-#             file.write(str(datetime.datetime.now()), "\nLink:", link_to_hit, "\nCount:", str(count))
-
-#     except TypeError: # If there are no results
-#         print("Count:", None)
-#         with open('/Users/chuckschultz/work/data/emdat.log', 'a') as file: # log transaction
-#             file.write(str(datetime.datetime.now()), "\nCount: None")
 
 get_emdat()
+
+    
+# # Function gets the data and inserts it into the database, 1000 at a time
+# def load_data(url, off_set=1):
+#     try:
+#         url2 = url + str(off_set)
+#         time.sleep(1)
+#         r = requests.get(url2, headers=header)
+#         j = r.json()
+#         for result in j['results']:
+#             try:
+#                 insert_sql = "INSERT INTO weather.noaa_raw (station_id, date, data_type, noaa_jsonb) VALUES (%s,%s,%s,%s) ON CONFLICT (station_id, date, data_type) DO UPDATE SET noaa_jsonb = %s"
+#                 cur.execute(insert_sql, (result['station'], result['date'], result['datatype'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True)))
+#             except:
+#                 print ('could not iterate through results')
+#         off_set += 1000
+#         if (off_set <= j['metadata']['resultset']['count']):
+#             load_data(url, off_set)
+#     except KeyError:
+#         pass

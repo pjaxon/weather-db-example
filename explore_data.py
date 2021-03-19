@@ -35,7 +35,7 @@ cur = db_connect()
 
 #query = 'SELECT column_name FROM information_schema.columns WHERE table_schema = \'weather\' AND table_name = \'stations_raw\''
 #query = 'SELECT * FROM weather.stations_raw LIMIT 10'
-query = 'SELECT station_jsonb FROM weather.stations_raw LIMIT 10'
+query = 'SELECT station_jsonb FROM weather.stations_raw'
 cur.execute(query)
 results = cur.fetchall()
 
@@ -43,9 +43,10 @@ flat_results = []
 for result in results:
     flat_results.append(result[0])
 
-res_pd = pd.DataFrame(flat_results)
+df = pd.DataFrame(flat_results)
+df.to_csv('/home/theraceblogger/temp_data/df.csv')
 
-print(res_pd.maxdate.value_counts())
+#print(res_pd.maxdate.value_counts())
 
 
 

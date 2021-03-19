@@ -35,11 +35,11 @@ cur = db_connect()
 
 #query = 'SELECT column_name FROM information_schema.columns WHERE table_schema = \'weather\' AND table_name = \'stations_raw\''
 #query = 'SELECT * FROM weather.stations_raw LIMIT 10'
-query = 'SELECT station_jsonb FROM weather.stations_raw'
+query = 'SELECT station_jsonb FROM weather.stations_raw LIMIT 10'
 cur.execute(query)
 results = cur.fetchall()
-print(results)
-# res_pd = pd.read_json(results, orient='records')
-# print(type(res_pd))
-# print(res_pd)
+# print(results)
+res_pd = pd.read_json(results, orient='records')
+#print(type(res_pd))
+print(res_pd)
 #print(results[0][0], results[1][0])

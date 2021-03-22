@@ -44,7 +44,7 @@ offset = "&offset="
 def get_meta():
     query = "SELECT sr.station_id, sr.station_jsonb ->> 'mindate', sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr"
     cur.execute(query)
-    results = cur.fetchall()
+    return cur.fetchall()
     #print(len(results))
     # for result in results:
     #     get_data(result)
@@ -93,7 +93,7 @@ def load_data(url, off_set=1):
 
 
 
-get_meta()
+results = get_meta()
 
 loaded = []
 

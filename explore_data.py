@@ -27,15 +27,9 @@ def db_connect():
 
 cur = db_connect()
 
-# query = 'SELECT COUNT(*) FROM weather.noaa_raw'
-# cur.execute(query)
-# results = cur.fetchall()
-# print(results)
-
 
 #query = 'SELECT column_name FROM information_schema.columns WHERE table_schema = \'weather\' AND table_name = \'stations_raw\''
-#query = 'SELECT * FROM weather.stations_raw LIMIT 10'
-query = 'SELECT emdat_jsonb FROM weather.emdat_raw LIMIT 10'
+query = 'SELECT emdat_jsonb FROM weather.emdat_raw'
 cur.execute(query)
 results = cur.fetchall()
 
@@ -43,13 +37,9 @@ flat_results = []
 for result in results:
     flat_results.append(result[0])
 
-pd.set_option('display.max_rows', None)
-pd.set_option('display.max_columns', None)
 df = pd.DataFrame(flat_results)
-#print(df)
 df.to_csv('/home/theraceblogger/weather-db-example/disaster.csv', index=False)
 
-#print(res_pd.maxdate.value_counts())
 
 
 
@@ -66,7 +56,7 @@ df.to_csv('/home/theraceblogger/weather-db-example/disaster.csv', index=False)
 #print(res_pd)
 
 
-#print(json.loads(results))
+#print(json.loads(results)) # creates dict?
 
 #print(type(res_pd))
 #print(res_pd)

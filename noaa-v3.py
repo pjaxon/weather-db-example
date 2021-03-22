@@ -45,8 +45,9 @@ def get_meta():
     query = "SELECT sr.station_id, sr.station_jsonb ->> 'mindate', sr.station_jsonb ->> 'maxdate' FROM weather.stations_raw sr"
     cur.execute(query)
     results = cur.fetchall()
-    for result in results:
-        get_data(result)
+    print(len(results))
+    # for result in results:
+    #     get_data(result)
 
 # Function gets data by customizing the iterations from the metadata and calling load_data()
 def get_data(result): # result is a list of strings

@@ -89,7 +89,7 @@ def load_data(url, off_set=1):
         off_set += 1000
         if (off_set <= j['metadata']['resultset']['count']):
             load_data(url, off_set)
-    except (KeyError, JSONDecodeError):
+    except Exception:
         pass
 
 

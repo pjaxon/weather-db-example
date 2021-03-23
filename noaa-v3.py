@@ -6,6 +6,7 @@ import requests
 from datetime import datetime
 import json
 import time
+import pandas as pd
 
 
 # Function that connects to database
@@ -95,11 +96,17 @@ def load_data(url, off_set=1):
 
 results = get_meta()
 
+#loaded = pd.read_csv('/home/theraceblogger/weather-db-example/loaded.csv').to_list()
 loaded = []
 
 def iter_result():
     for i in range(len(loaded), len(results)):
-        get_data(results[i])
-        loaded.append(results[i][0])
+        try:
+            get_data(results[i])
+            loaded.append(results[i][0])
+        except Exception as error:
+            loaded_df = pd.DataFrame(loaded)
+            loaded_df.to_csv('/home/theraceblogger/weather-db-example/loaded.csv', index=False)
+            raise error
 
 iter_result()

@@ -80,7 +80,7 @@ def load_data(url, off_set=1):
         time.sleep(1)
         r = requests.get(url2, headers=header)
         j = r.json()
-        j = json.load(j)
+        j = json.loads(j)
         for result in j['results']:
             try:
                 insert_sql = "INSERT INTO weather.noaa_raw (station_id, date, data_type, noaa_jsonb) VALUES (%s,%s,%s,%s) ON CONFLICT (station_id, date, data_type) DO UPDATE SET noaa_jsonb = %s"

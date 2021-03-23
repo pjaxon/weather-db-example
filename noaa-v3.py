@@ -96,7 +96,7 @@ def load_data(url, off_set=1):
 
 results = get_meta()
 
-loaded = pd.read_csv('/Users/chuckschultz/weather-db-example/loaded.csv')
+loaded = pd.read_csv('/home/theraceblogger/weather-db-example/loaded.csv')
 #print(len(loaded))
 #loaded = []
 

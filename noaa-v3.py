@@ -75,22 +75,22 @@ def get_data(result): # result is a list of strings
 
 # Function gets the data and inserts it into the database, 1000 at a time
 def load_data(url, off_set=1):
-    # try:
-    url2 = url + str(off_set)
-    time.sleep(1)
-    r = requests.get(url2, headers=header)
-    j = r.json()
-    for result in j['results']:
         try:
-            insert_sql = "INSERT INTO weather.noaa_raw (station_id, date, data_type, noaa_jsonb) VALUES (%s,%s,%s,%s) ON CONFLICT (station_id, date, data_type) DO UPDATE SET noaa_jsonb = %s"
-            cur.execute(insert_sql, (result['station'], result['date'], result['datatype'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True)))
-        except:
-            print ('could not iterate through results')
-    off_set += 1000
-    if (off_set <= j['metadata']['resultset']['count']):
-        load_data(url, off_set)
-    # except :
-    #     pass
+        url2 = url + str(off_set)
+        time.sleep(1)
+        r = requests.get(url2, headers=header)
+        j = r.json()
+        for result in j['results']:
+            try:
+                insert_sql = "INSERT INTO weather.noaa_raw (station_id, date, data_type, noaa_jsonb) VALUES (%s,%s,%s,%s) ON CONFLICT (station_id, date, data_type) DO UPDATE SET noaa_jsonb = %s"
+                cur.execute(insert_sql, (result['station'], result['date'], result['datatype'], json.dumps(result, indent=4, sort_keys=True), json.dumps(result, indent=4, sort_keys=True)))
+            except:
+                print ('could not iterate through results')
+        off_set += 1000
+        if (off_set <= j['metadata']['resultset']['count']):
+            load_data(url, off_set)
+    except KeyError:
+        pass
 
 
 

@@ -99,7 +99,7 @@ results = get_meta()
 loaded = pd.read_csv('/home/theraceblogger/weather-db-example/loaded.csv')
 loaded = loaded['0'].tolist()
 
-#print(len(loaded))
+print("Number of stations loaded:", len(loaded))
 #loaded = []
 
 def iter_result():

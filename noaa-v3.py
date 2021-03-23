@@ -75,7 +75,7 @@ def get_data(result): # result is a list of strings
 
 # Function gets the data and inserts it into the database, 1000 at a time
 def load_data(url, off_set=1):
-        try:
+    try:
         url2 = url + str(off_set)
         time.sleep(1)
         r = requests.get(url2, headers=header)

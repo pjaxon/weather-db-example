@@ -29,7 +29,7 @@ cur = db_connect()
 
 
 #query = 'SELECT column_name FROM information_schema.columns WHERE table_schema = \'weather\' AND table_name = \'stations_raw\''
-query = 'SELECT noaa_jsonb FROM weather.noaa_raw nr WHERE nr.station_id = GHCND:AEM00041217'
+query = 'SELECT nr.noaa_jsonb FROM weather.noaa_raw nr WHERE nr.station_id = \'GHCND:AEM00041217\''
 cur.execute(query)
 results = cur.fetchall()
 

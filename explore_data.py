@@ -29,7 +29,7 @@ cur = db_connect()
 
 
 #query = 'SELECT column_name FROM information_schema.columns WHERE table_schema = \'weather\' AND table_name = \'stations_raw\''
-query = 'SELECT nr.noaa_jsonb FROM weather.noaa_raw nr WHERE nr.station_id = \'GHCND:AEM00041217\''
+query = 'SELECT nr.noaa_jsonb FROM weather.noaa_raw nr'
 cur.execute(query)
 results = cur.fetchall()
 
@@ -38,7 +38,7 @@ for result in results:
     flat_results.append(result[0])
 
 df = pd.DataFrame(flat_results)
-df.to_csv('/home/theraceblogger/weather-db-example/noaa_AEM00041217.csv', index=False)
+df.to_csv('/home/theraceblogger/weather-db-example/noaa_0.csv', index=False)
 
 
 

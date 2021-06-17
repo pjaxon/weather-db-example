@@ -42,7 +42,11 @@ def add_cc(df):
 
 def fetch_stations():
     # query = 'SELECT sr.station_jsonb FROM weather.stations_raw sr'
-    query = 'SELECT sr.station_jsonb FROM weather.stations_raw sr WHERE (sr.station_jsonb ->> \'maxdate\')::date >= CURRENT_DATE - INTERVAL \'10 years\' AND (sr.station_jsonb ->> \'maxdate\')::date - INTERVAL \'30 years\' >= (sr.station_jsonb ->> \'mindate\')::date'
+    query = 'SELECT sr.station_jsonb\
+        FROM weather.stations_raw sr\
+            WHERE (sr.station_jsonb ->> \'maxdate\')::date >= CURRENT_DATE - INTERVAL \'10 years\'\
+                AND (sr.station_jsonb ->> \'maxdate\')::date - INTERVAL \'30 years\' >= (sr.station_jsonb ->> \'mindate\')::date\
+                    AND (sr.station_jsonb ->> \'datacoverage\')::DECIMAL > 0.75'
     cur.execute(query)
     results = cur.fetchall()
     
@@ -51,8 +55,8 @@ def fetch_stations():
         flat_results.append(result[0])
     
     df = pd.DataFrame(flat_results)
-    #df_cc = add_cc(df)
-    df.to_csv('/home/theraceblogger/weather-db-example/stations_10active_30span.csv', index=False)
+    # df_cc = add_cc(df)
+    df.to_csv('/home/theraceblogger/weather-db-example/stations_10active_30span_75cover.csv', index=False)
 
 
 fetch_stations()
